@@ -1,0 +1,2 @@
+# AndroidAppUseless
+Useless android app.
