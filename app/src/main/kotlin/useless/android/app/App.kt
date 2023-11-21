@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import useless.android.app.module.app.Colors
 import useless.android.app.module.app.Injection
 import useless.android.app.provider.Contexts
+import useless.android.app.provider.FinalLocalDataProvider
 import useless.android.app.provider.FinalLoggerFactory
 import useless.android.app.provider.Logger
 import useless.android.app.util.AbstractViewModel
@@ -45,6 +46,7 @@ internal class App : Application() {
                 main = Dispatchers.Main,
                 default = Dispatchers.Default,
             ),
+            local = FinalLocalDataProvider(this),
         )
     }
 

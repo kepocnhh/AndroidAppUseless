@@ -10,7 +10,7 @@ Useless android app.
  - [?] module foo
  - [?] view model foo
  - [?] injection
- - [ ] local data provider
+ - [+] local data provider
  - [ ] test module foo
  - [ ] mock local data provider
 
