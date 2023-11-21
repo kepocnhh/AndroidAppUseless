@@ -7,9 +7,9 @@ Useless android app.
 
  - [+] logger factory
  - [+] app theme
- - [?] module foo
- - [?] view model foo
- - [?] injection
+ - [+] module foo
+ - [+] view model foo
+ - [+] injection
  - [+] local data provider
  - [ ] test module foo
  - [ ] mock local data provider

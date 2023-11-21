@@ -1,3 +1,4 @@
+import com.android.build.api.variant.ComponentIdentity
 import sp.gx.core.camelCase
 import sp.gx.core.existing
 import sp.gx.core.file
@@ -12,11 +13,25 @@ repositories {
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("org.gradle.jacoco")
 }
 
 android {
     namespace = "useless.android.app"
     compileSdk = Version.Android.compileSdk
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all {
+                // https://stackoverflow.com/a/71834475/4398606
+                it.configure<JacocoTaskExtension> {
+                    isIncludeNoLocationClasses = true
+                    excludes = listOf("jdk.internal.*")
+                }
+            }
+        }
+    }
 
     defaultConfig {
         applicationId = namespace
@@ -34,6 +49,8 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             manifestPlaceholders["buildType"] = name
+            testBuildType = name
+            enableUnitTestCoverage = true
         }
     }
 
@@ -43,6 +60,56 @@ android {
     }
 
     composeOptions.kotlinCompilerExtensionVersion = Version.Android.compose
+}
+
+jacoco.toolVersion = Version.jacoco
+
+fun checkCoverage(variant: ComponentIdentity) {
+    val taskUnitTest = camelCase("test", variant.name, "UnitTest")
+    val executionData = layout.buildDirectory.get()
+        .dir("outputs/unit_test_code_coverage/${variant.name}UnitTest")
+        .file("$taskUnitTest.exec")
+    tasks.getByName<Test>(taskUnitTest) {
+        doLast {
+            executionData.existing().file().filled()
+        }
+    }
+    val taskCoverageReport = task<JacocoReport>(camelCase("assemble", variant.name, "CoverageReport")) {
+        dependsOn(taskUnitTest)
+        reports {
+            csv.required = false
+            html.required = true
+            xml.required = false
+        }
+        sourceDirectories.setFrom(file("src/main/kotlin"))
+        val dirs = layout.buildDirectory.get()
+            .dir("tmp/kotlin-classes")
+            .dir(variant.name)
+            .let(::fileTree)
+        classDirectories.setFrom(dirs)
+        executionData(executionData)
+        doLast {
+            val report = layout.buildDirectory.get()
+                .dir("reports/jacoco/$name/html")
+                .file("index.html")
+                .asFile
+            if (report.exists()) {
+                println("Coverage report: ${report.absolutePath}")
+            }
+        }
+    }
+    task<JacocoCoverageVerification>(camelCase("check", variant.name, "Coverage")) {
+        dependsOn(taskCoverageReport)
+        violationRules {
+            rule {
+                limit {
+                    minimum = BigDecimal(0.9)
+                }
+            }
+        }
+        classDirectories.setFrom(taskCoverageReport.classDirectories)
+        executionData(taskCoverageReport.executionData)
+    }
 }
 
 androidComponents.onVariants { variant ->
@@ -67,6 +134,9 @@ androidComponents.onVariants { variant ->
         }
         tasks.getByName<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>(camelCase("compile", variant.name, "UnitTest", "Kotlin")) {
             kotlinOptions.jvmTarget = Version.jvmTarget
+        }
+        if (variant.buildType == android.testBuildType) {
+            checkCoverage(variant)
         }
         val checkManifestTask = task(camelCase("checkManifest", variant.name)) {
             dependsOn(camelCase("compile", variant.name, "Sources"))
@@ -102,4 +172,5 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    camelCase("test", android.testBuildType, "Implementation")("androidx.compose.ui:ui-test-manifest:${Version.Android.compose}")
 }

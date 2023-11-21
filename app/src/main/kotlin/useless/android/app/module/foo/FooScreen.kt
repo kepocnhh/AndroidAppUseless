@@ -14,12 +14,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.channels.broadcast
 import useless.android.app.App
+import useless.android.app.util.showToast
 
 @Composable
 internal fun FooScreen() {
+    val context = LocalContext.current
     val logger = App.newLogger("[Foo]")
     val viewModel = App.viewModel<FooViewModel>()
     val state = viewModel.state.collectAsState().value
@@ -29,6 +33,22 @@ internal fun FooScreen() {
             logger.debug("request state...")
             viewModel.requestState()
         }
+    }
+    LaunchedEffect(Unit) {
+        viewModel
+            .broadcast
+            .collect { broadcast ->
+                when (broadcast) {
+                    is FooViewModel.Broadcast.OnText -> {
+                        val message = when {
+                            broadcast.text.isEmpty() -> "[text is empty]"
+                            broadcast.text.isBlank() -> "[text is blank]"
+                            else -> broadcast.text
+                        }
+                        context.showToast(message)
+                    }
+                }
+            }
     }
     Box(
         modifier = Modifier
@@ -41,7 +61,10 @@ internal fun FooScreen() {
                 .align(Alignment.Center),
         ) {
             BasicText(
-                modifier = Modifier.fillMaxWidth().height(64.dp).wrapContentSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .wrapContentSize(),
                 text = state?.text.orEmpty(),
                 style = TextStyle(color = App.Theme.colors.foreground),
             )
@@ -61,10 +84,25 @@ internal fun FooScreen() {
                     .fillMaxWidth()
                     .height(64.dp)
                     .clickable {
-                        viewModel.updateText(System.currentTimeMillis().toString())
+                        viewModel.updateText(
+                            System
+                                .currentTimeMillis()
+                                .toString()
+                        )
                     }
                     .wrapContentSize(),
                 text = "get time",
+                style = TextStyle(color = App.Theme.colors.foreground),
+            )
+            BasicText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .clickable {
+                        viewModel.requestText()
+                    }
+                    .wrapContentSize(),
+                text = "request text",
                 style = TextStyle(color = App.Theme.colors.foreground),
             )
         }
