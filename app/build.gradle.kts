@@ -170,7 +170,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.compose.foundation:foundation:${Version.Android.compose}")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
-    testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    camelCase("test", android.testBuildType, "Implementation")("androidx.compose.ui:ui-test-manifest:${Version.Android.compose}")
+    testImplementation("org.robolectric:robolectric:4.11")
+    testImplementation("androidx.compose.ui:ui-test-junit4:${Version.Android.compose}")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:${Version.Android.compose}")
 }
