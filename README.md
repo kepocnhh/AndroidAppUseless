@@ -5,8 +5,8 @@ Useless android app.
 
 ### backlog
 
- - [ ] logger
- - [ ] app theme
+ - [+] logger factory
+ - [+] app theme
  - [ ] module foo
  - [ ] view model foo
  - [ ] injection

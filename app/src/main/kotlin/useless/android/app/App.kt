@@ -2,12 +2,34 @@ package useless.android.app
 
 import android.app.Application
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
+import useless.android.app.module.app.Colors
 import useless.android.app.module.app.Injection
 import useless.android.app.provider.FinalLoggerFactory
 import useless.android.app.provider.Logger
 
 internal class App : Application() {
+    object Theme {
+        private val LocalColors = staticCompositionLocalOf<Colors> { error("no colors") }
+
+        val colors: Colors
+            @Composable
+            @ReadOnlyComposable
+            get() = LocalColors.current
+
+        @Composable
+        fun Composition(content: @Composable () -> Unit) {
+            val colors = Colors.dark
+            CompositionLocalProvider(
+                LocalColors provides colors,
+                content = content,
+            )
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         _injection = Injection(

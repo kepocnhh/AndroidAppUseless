@@ -13,7 +13,9 @@ internal class MainActivity : AppCompatActivity() {
             BackHandler {
                 finish()
             }
-            FooScreen()
+            App.Theme.Composition {
+                FooScreen()
+            }
         }
     }
 }
