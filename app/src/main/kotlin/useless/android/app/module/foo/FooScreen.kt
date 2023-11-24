@@ -91,6 +91,10 @@ internal fun FooScreen() {
             )
             BasicText(
                 modifier = Modifier
+                    .semantics {
+                        role = Role.Button
+                        contentDescription = "FooScreen:get:time"
+                    }
                     .fillMaxWidth()
                     .height(64.dp)
                     .clickable {
