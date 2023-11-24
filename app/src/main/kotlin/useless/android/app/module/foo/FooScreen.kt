@@ -15,9 +15,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.channels.broadcast
 import useless.android.app.App
 import useless.android.app.util.showToast
 
@@ -62,6 +65,9 @@ internal fun FooScreen() {
         ) {
             BasicText(
                 modifier = Modifier
+                    .semantics {
+                        contentDescription = "FooScreen:text"
+                    }
                     .fillMaxWidth()
                     .height(64.dp)
                     .wrapContentSize(),
@@ -70,6 +76,10 @@ internal fun FooScreen() {
             )
             BasicText(
                 modifier = Modifier
+                    .semantics {
+                        role = Role.Button
+                        contentDescription = "FooScreen:clear"
+                    }
                     .fillMaxWidth()
                     .height(64.dp)
                     .clickable {
