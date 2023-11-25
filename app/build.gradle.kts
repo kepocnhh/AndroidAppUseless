@@ -4,6 +4,16 @@ import sp.gx.core.existing
 import sp.gx.core.file
 import sp.gx.core.filled
 import sp.gx.core.kebabCase
+import sp.gx.core.Markdown
+import sp.gx.core.Badge
+import sp.gx.core.GitHub
+import sp.gx.core.check
+import sp.gx.core.resolve
+
+val gh = GitHub.Repository(
+    owner = "StanleyProjects",
+    name = rootProject.name,
+)
 
 repositories {
     google()
@@ -14,6 +24,22 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.gradle.jacoco")
+}
+
+fun ComponentIdentity.getVersion(): String {
+    check(flavorName!!.isEmpty())
+    return when (buildType) {
+        "debug" -> kebabCase(
+            android.defaultConfig.versionName!!,
+            name,
+            android.defaultConfig.versionCode!!.toString(),
+        )
+        "release" -> kebabCase(
+            android.defaultConfig.versionName!!,
+            android.defaultConfig.versionCode!!.toString(),
+        )
+        else -> error("Build type \"${buildType}\" is not supported!")
+    }
 }
 
 android {
@@ -120,6 +146,34 @@ fun checkCoverage(variant: ComponentIdentity) {
     }
 }
 
+fun checkReadme(variant: ComponentIdentity) {
+    task(camelCase("check", variant.name, "Readme")) {
+        doLast {
+            val badge = Markdown.image(
+                text = "version",
+                url = Badge.url(
+                    label = "version",
+                    message = variant.getVersion(),
+                    color = "2962ff",
+                ),
+            )
+            val expected = setOf(
+                badge,
+                Markdown.link("GitHub", gh.url().resolve("releases", "tag", variant.getVersion())),
+            )
+            val report = layout.buildDirectory.get()
+                .dir("reports/analysis/readme")
+                .dir(variant.name)
+                .file("index.html")
+                .asFile
+            rootDir.resolve("README.md").check(
+                expected = expected,
+                report = report,
+            )
+        }
+    }
+}
+
 val ktlint: Configuration by configurations.creating
 
 fun checkCodeStyle(variant: ComponentIdentity) {
@@ -173,6 +227,7 @@ androidComponents.onVariants { variant ->
         if (variant.buildType == android.testBuildType) {
             checkCoverage(variant)
         }
+        checkReadme(variant)
         checkCodeStyle(variant)
         val checkManifestTask = task(camelCase("checkManifest", variant.name)) {
             dependsOn(camelCase("compile", variant.name, "Sources"))
