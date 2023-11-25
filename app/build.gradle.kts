@@ -1,13 +1,13 @@
 import com.android.build.api.variant.ComponentIdentity
+import sp.gx.core.Badge
+import sp.gx.core.GitHub
+import sp.gx.core.Markdown
 import sp.gx.core.camelCase
+import sp.gx.core.check
 import sp.gx.core.existing
 import sp.gx.core.file
 import sp.gx.core.filled
 import sp.gx.core.kebabCase
-import sp.gx.core.Markdown
-import sp.gx.core.Badge
-import sp.gx.core.GitHub
-import sp.gx.core.check
 import sp.gx.core.resolve
 
 val gh = GitHub.Repository(
