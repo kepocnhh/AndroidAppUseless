@@ -82,10 +82,18 @@ fun checkCoverage(variant: ComponentIdentity) {
             xml.required = false
         }
         sourceDirectories.setFrom(file("src/main/kotlin"))
-        val dirs = layout.buildDirectory.get()
+        val root = layout.buildDirectory.get()
             .dir("tmp/kotlin-classes")
             .dir(variant.name)
-            .let(::fileTree)
+        val dirs = fileTree(root) {
+            val path = "**/${android.namespace!!.replace('.', '/')}/module/**"
+            setOf("Screen", "ViewModel").forEach { name ->
+                include(
+                    "$path/*$name.class",
+                    "$path/*${name}Kt.class",
+                )
+            }
+        }
         classDirectories.setFrom(dirs)
         executionData(executionData)
         doLast {
@@ -103,7 +111,7 @@ fun checkCoverage(variant: ComponentIdentity) {
         violationRules {
             rule {
                 limit {
-                    minimum = BigDecimal(0.9)
+                    minimum = BigDecimal(0.96)
                 }
             }
         }
