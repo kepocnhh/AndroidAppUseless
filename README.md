@@ -5,16 +5,16 @@ Useless android app.
 
 ### backlog
 
- - [+] logger factory
- - [+] app theme
- - [+] module foo
- - [+] view model foo
- - [+] injection
- - [+] local data provider
- - [ ] test module foo
- - [ ] mock local data provider
+ - [x] logger factory
+ - [x] app theme
+ - [x] module foo
+ - [x] view model foo
+ - [x] injection
+ - [x] local data provider
+ - [x] test module foo
+ - [x] mock local data provider
 
- - [ ] checkLicense
+ - [x] checkLicense
  - [ ] checkCodeStyle
  - [ ] check${VARIANT^}Readme
  - [ ] test${TEST_VARIANT^}UnitTest
