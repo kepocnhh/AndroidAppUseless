@@ -15,7 +15,7 @@ Useless android app.
  - [x] mock local data provider
 
  - [x] checkLicense
- - [ ] checkCodeStyle
+ - [x] check${VARIANT^}CodeStyle
  - [ ] check${VARIANT^}Readme
  - [ ] test${TEST_VARIANT^}UnitTest
  - [ ] check${TEST_VARIANT^}Coverage

@@ -120,6 +120,33 @@ fun checkCoverage(variant: ComponentIdentity) {
     }
 }
 
+val ktlint: Configuration by configurations.creating
+
+fun checkCodeStyle(variant: ComponentIdentity) {
+    task<JavaExec>(camelCase("check", variant.name, "CodeStyle")) {
+        classpath = ktlint
+        mainClass = "com.pinterest.ktlint.Main"
+        val reporter = "html"
+        val output = layout.buildDirectory.get()
+            .dir("reports/analysis/code/style")
+            .dir("${variant.name}/html")
+            .file("index.html")
+            .asFile
+        val files = setOf(
+            "build.gradle.kts",
+            "settings.gradle.kts",
+            "buildSrc/src/main/kotlin/**/*.kt",
+            "buildSrc/build.gradle.kts",
+        ).map(rootDir::resolve) + setOf(
+            "src/main/kotlin/**/*.kt",
+            "src/test/kotlin/**/*.kt",
+            "src/${variant.buildType!!}/kotlin/**/*.kt",
+            "build.gradle.kts",
+        ).map(::file)
+        args(files + "--reporter=$reporter,output=${output.absolutePath}")
+    }
+}
+
 androidComponents.onVariants { variant ->
     val output = variant.outputs.single()
     check(output is com.android.build.api.variant.impl.VariantOutputImpl)
@@ -146,6 +173,7 @@ androidComponents.onVariants { variant ->
         if (variant.buildType == android.testBuildType) {
             checkCoverage(variant)
         }
+        checkCodeStyle(variant)
         val checkManifestTask = task(camelCase("checkManifest", variant.name)) {
             dependsOn(camelCase("compile", variant.name, "Sources"))
             doLast {
@@ -182,4 +210,10 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.11")
     testImplementation("androidx.compose.ui:ui-test-junit4:${Version.Android.compose}")
     debugImplementation("androidx.compose.ui:ui-test-manifest:${Version.Android.compose}")
+
+    ktlint("com.pinterest:ktlint:${Version.ktlint}") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+        }
+    }
 }

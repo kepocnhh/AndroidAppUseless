@@ -1,7 +1,6 @@
 package useless.android.app.module.foo
 
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.withIndex
@@ -54,7 +53,7 @@ internal class FooViewModelTest {
             val secondText = "barbaz"
             val injection = mockInjection(
                 contexts = mockContexts(main = coroutineContext),
-                local = MockLocalDataProvider(text = initialText)
+                local = MockLocalDataProvider(text = initialText),
             )
             val viewModel = FooViewModel(injection)
             viewModel
@@ -97,7 +96,7 @@ internal class FooViewModelTest {
             val initialText = "foobar"
             val injection = mockInjection(
                 contexts = mockContexts(main = coroutineContext),
-                local = MockLocalDataProvider(text = initialText)
+                local = MockLocalDataProvider(text = initialText),
             )
             val viewModel = FooViewModel(injection)
             val job = launch(injection.contexts.default) {

@@ -2,6 +2,7 @@ object Version {
     const val jacoco = "0.8.9"
     const val jvmTarget = "17"
     const val kotlin = "1.9.10"
+    const val ktlint = "0.50.0"
 
     object Android {
         const val compileSdk = 34

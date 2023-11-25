@@ -98,11 +98,7 @@ internal fun FooScreen() {
                     .fillMaxWidth()
                     .height(64.dp)
                     .clickable {
-                        viewModel.updateText(
-                            System
-                                .currentTimeMillis()
-                                .toString()
-                        )
+                        viewModel.updateText(System.currentTimeMillis().toString())
                     }
                     .wrapContentSize(),
                 text = "get time",

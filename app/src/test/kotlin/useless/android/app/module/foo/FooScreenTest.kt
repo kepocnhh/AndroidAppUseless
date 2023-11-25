@@ -5,7 +5,6 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -78,7 +77,7 @@ internal class FooScreenTest {
         }
     }
 
-    private fun textMatcher(description: String, predicate: (String) -> Boolean) : SemanticsMatcher {
+    private fun textMatcher(description: String, predicate: (String) -> Boolean): SemanticsMatcher {
         return SemanticsMatcher(description) { node ->
             val list = node.config.getOrNull(SemanticsProperties.Text)
             when {
