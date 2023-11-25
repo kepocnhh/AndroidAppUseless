@@ -75,8 +75,16 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             manifestPlaceholders["buildType"] = name
-            testBuildType = name
+            testBuildType = name // todo
             enableUnitTestCoverage = true
+        }
+        getByName("release") {
+            applicationIdSuffix = ""
+            versionNameSuffix = ""
+            isMinifyEnabled = true
+            isShrinkResources = true
+            manifestPlaceholders["buildType"] = name
+            enableUnitTestCoverage = false
         }
     }
 

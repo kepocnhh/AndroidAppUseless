@@ -23,7 +23,7 @@ Useless android app.
  - [x] mock local data provider
 
  - [x] checkLicense
- - [ ] check${VARIANT^}Readme
+ - [x] check${VARIANT^}Readme
  - [x] check${VARIANT^}CodeStyle
  - [ ] test${TEST_VARIANT^}UnitTest
  - [ ] check${TEST_VARIANT^}Coverage
