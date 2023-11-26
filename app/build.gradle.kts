@@ -9,9 +9,6 @@ import sp.gx.core.file
 import sp.gx.core.filled
 import sp.gx.core.kebabCase
 import sp.gx.core.resolve
-import java.nio.file.Path as NIOPath
-import java.net.URI
-import java.nio.file.Paths
 
 val gh = GitHub.Repository(
     owner = "StanleyProjects",
@@ -27,17 +24,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.gradle.jacoco")
-}
-
-gradle.taskGraph.whenReady {
-    val buildType = "release"
-    val flavorName = ""
-    val hasTask = allTasks.any {
-        it.name.endsWith(camelCase("package", flavorName, buildType))
-    }
-    if (hasTask) {
-        setSigningConfig(buildType)
-    }
 }
 
 fun ComponentIdentity.getVersion(): String {
@@ -99,7 +85,12 @@ android {
             isShrinkResources = true
             manifestPlaceholders["buildType"] = name
             enableUnitTestCoverage = false
-            signingConfig = signingConfigs.create(name)
+            signingConfig = signingConfigs.create(name) {
+                storeFile = properties["STORE_FILE"]?.toString()?.let(::File)
+                storePassword = properties["STORE_PASSWORD"]?.toString()
+                keyPassword = storePassword
+                keyAlias = name
+            }
         }
     }
 
@@ -224,34 +215,12 @@ fun checkCodeStyle(variant: ComponentIdentity) {
     }
 }
 
-fun setSigningConfig(buildType: String) {
-    val STORE_FILE_PATH: String? by project
-    val STORE_PASSWORD: String? by project
-    android.signingConfigs.getByName(buildType) {
-        val storeFilePath = if (STORE_FILE_PATH.isNullOrEmpty()) {
-            System.console().readLine("\nKeystore: ")
-        } else {
-            STORE_FILE_PATH!!
-        }
-        storeFile = File(storeFilePath).existing().filled().file()
-        storePassword = if (STORE_PASSWORD.isNullOrEmpty()) {
-            String(System.console().readPassword("\nPassword: "))
-        } else {
-            STORE_PASSWORD!!
-        }
-        keyPassword = storePassword
-        keyAlias = buildType
-    }
-}
-
 androidComponents.onVariants { variant ->
     val output = variant.outputs.single()
     check(output is com.android.build.api.variant.impl.VariantOutputImpl)
     val name = kebabCase(
         rootProject.name,
-        android.defaultConfig.versionName!!,
-        variant.name,
-        android.defaultConfig.versionCode.toString(),
+        variant.getVersion(),
     )
     output.outputFileName.set("$name.apk")
     afterEvaluate {
