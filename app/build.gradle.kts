@@ -1,6 +1,5 @@
-import com.android.build.api.variant.ApplicationVariant
-import com.android.build.api.variant.Component
 import com.android.build.api.variant.ComponentIdentity
+import io.gitlab.arturbosch.detekt.Detekt
 import sp.gx.core.Badge
 import sp.gx.core.GitHub
 import sp.gx.core.Markdown
@@ -11,7 +10,6 @@ import sp.gx.core.file
 import sp.gx.core.filled
 import sp.gx.core.kebabCase
 import sp.gx.core.resolve
-import io.gitlab.arturbosch.detekt.Detekt
 import sp.gx.core.slashCase
 
 val gh = GitHub.Repository(
