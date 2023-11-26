@@ -11,7 +11,7 @@ import sp.gx.core.kebabCase
 import sp.gx.core.resolve
 
 val gh = GitHub.Repository(
-    owner = "StanleyProjects",
+    owner = "kepocnhh",
     name = rootProject.name,
 )
 
