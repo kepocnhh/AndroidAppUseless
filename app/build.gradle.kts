@@ -29,7 +29,7 @@ plugins {
 fun ComponentIdentity.getVersion(): String {
     check(flavorName!!.isEmpty())
     return when (buildType) {
-        "debug" -> kebabCase(
+        "debug", "examine" -> kebabCase(
             android.defaultConfig.versionName!!,
             name,
             android.defaultConfig.versionCode!!.toString(),
@@ -91,6 +91,16 @@ android {
                 keyPassword = storePassword
                 keyAlias = name
             }
+        }
+        create("examine") {
+            val parent = getByName("release")
+            initWith(parent)
+            sourceSets.getByName(name) {
+                res.srcDir("src/${parent.name}/res")
+                kotlin.srcDir("src/${parent.name}/kotlin")
+            }
+            enableUnitTestCoverage = true
+            testBuildType = name
         }
     }
 
@@ -218,11 +228,7 @@ fun checkCodeStyle(variant: ComponentIdentity) {
 androidComponents.onVariants { variant ->
     val output = variant.outputs.single()
     check(output is com.android.build.api.variant.impl.VariantOutputImpl)
-    val name = kebabCase(
-        rootProject.name,
-        variant.getVersion(),
-    )
-    output.outputFileName.set("$name.apk")
+    output.outputFileName = "${kebabCase(rootProject.name, variant.getVersion())}.apk"
     afterEvaluate {
         tasks.getByName<JavaCompile>(camelCase("compile", variant.name, "JavaWithJavac")) {
             targetCompatibility = Version.jvmTarget
@@ -276,7 +282,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("org.robolectric:robolectric:4.11")
     testImplementation("androidx.compose.ui:ui-test-junit4:${Version.Android.compose}")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:${Version.Android.compose}")
 
     ktlint("com.pinterest:ktlint:${Version.ktlint}") {
         attributes {

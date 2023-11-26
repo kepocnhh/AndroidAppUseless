@@ -25,8 +25,8 @@ Useless android app.
  - [x] checkLicense
  - [x] check${VARIANT^}Readme
  - [x] check${VARIANT^}CodeStyle
- - [ ] test${TEST_VARIANT^}UnitTest
- - [ ] check${TEST_VARIANT^}Coverage
+ - [x] test${TEST_VARIANT^}UnitTest
+ - [x] check${TEST_VARIANT^}Coverage
  - [ ] check${VARIANT^}CodeQuality
  - [ ] check${VARIANT^}CodeQualityUnitTest
 
