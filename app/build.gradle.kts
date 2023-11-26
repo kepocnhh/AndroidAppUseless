@@ -78,7 +78,6 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             manifestPlaceholders["buildType"] = name
-            testBuildType = name // todo
             enableUnitTestCoverage = true
         }
         getByName("release") {
@@ -354,6 +353,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.compose.foundation:foundation:${Version.Android.compose}")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.5.4")
+    debugImplementation("androidx.compose.ui:ui-tooling-preview:1.5.4")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("org.robolectric:robolectric:4.11")
     testImplementation("androidx.compose.ui:ui-test-junit4:${Version.Android.compose}")

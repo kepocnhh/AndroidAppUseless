@@ -21,6 +21,7 @@ Useless android app.
  - [x] local data provider
  - [x] test module foo
  - [x] mock local data provider
+ - [x] compose preview
 
  - [x] checkLicense
  - [x] check${VARIANT^}Readme

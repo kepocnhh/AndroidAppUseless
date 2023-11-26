@@ -57,6 +57,27 @@ internal fun FooScreen() {
                 }
             }
     }
+    FooScreen(
+        state = state,
+        onClear = {
+            viewModel.updateText("")
+        },
+        onGetTime = {
+            viewModel.updateText(System.currentTimeMillis().toString())
+        },
+        onRequestText = {
+            viewModel.requestText()
+        },
+    )
+}
+
+@Composable
+internal fun FooScreen(
+    state: FooViewModel.State?,
+    onClear: () -> Unit,
+    onGetTime: () -> Unit,
+    onRequestText: () -> Unit,
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -104,9 +125,7 @@ internal fun FooScreen() {
                     }
                     .fillMaxWidth()
                     .height(64.dp)
-                    .clickable {
-                        viewModel.updateText("")
-                    }
+                    .clickable(onClick = onClear)
                     .wrapContentSize(),
                 text = "clear",
                 style = TextStyle(color = App.Theme.colors.foreground),
@@ -119,9 +138,7 @@ internal fun FooScreen() {
                     }
                     .fillMaxWidth()
                     .height(64.dp)
-                    .clickable {
-                        viewModel.updateText(System.currentTimeMillis().toString())
-                    }
+                    .clickable(onClick = onGetTime)
                     .wrapContentSize(),
                 text = "get time",
                 style = TextStyle(color = App.Theme.colors.foreground),
@@ -134,9 +151,7 @@ internal fun FooScreen() {
                     }
                     .fillMaxWidth()
                     .height(64.dp)
-                    .clickable {
-                        viewModel.requestText()
-                    }
+                    .clickable(onClick = onRequestText)
                     .wrapContentSize(),
                 text = "request text",
                 style = TextStyle(color = App.Theme.colors.foreground),
