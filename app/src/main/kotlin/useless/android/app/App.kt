@@ -38,6 +38,7 @@ internal class App : Application() {
         }
     }
 
+    @Suppress("InjectDispatcher")
     override fun onCreate() {
         super.onCreate()
         _injection = Injection(

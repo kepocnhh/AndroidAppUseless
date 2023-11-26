@@ -1,4 +1,4 @@
-# 2023/10/27
+# 2023/11/26
 
 naming:
   active: true
@@ -26,9 +26,7 @@ naming:
     active: true
     minimumFunctionNameLength: 3
   FunctionNaming:
-    active: true
-    functionPattern: '[a-z][a-zA-Z0-9]*'
-    excludeClassPattern: '$^'
+    active: false # todo compose
   FunctionParameterNaming:
     active: true
     parameterPattern: '[a-z][A-Za-z0-9]*'

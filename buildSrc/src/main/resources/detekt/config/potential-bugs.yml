@@ -1,4 +1,4 @@
-# 2023/10/27
+# 2023/11/26
 
 potential-bugs:
   active: true
@@ -39,17 +39,19 @@ potential-bugs:
     active: true
     restrictToConfig: false
     ignoreFunctionCall: [
+      android.content.SharedPreferences.Editor.commit,
       java.lang.StringBuilder.append,
       kotlin.TODO,
       kotlin.also,
       kotlin.collections.MutableList.add,
+      kotlin.collections.MutableMap.remove,
       kotlin.collections.MutableSet.add,
       kotlin.collections.MutableSet.addAll,
       kotlin.collections.removeAll,
       kotlin.error,
+      kotlinx.coroutines.flow.SharedFlow.collect,
       kotlinx.coroutines.launch,
       kotlinx.coroutines.withContext,
-      org.junit.jupiter.api.Assertions.assertThrows
     ]
   ImplicitDefaultLocale:
     active: true

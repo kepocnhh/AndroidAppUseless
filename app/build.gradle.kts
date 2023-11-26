@@ -278,8 +278,8 @@ fun getDetektConfigs(): Iterable<File> {
 
 fun getDetektUnitTestConfigs(): Iterable<File> {
     return setOf(
-        "test",
         "android/test",
+        "test",
     ).map { config ->
         rootDir.resolve("buildSrc/src/main/resources/detekt/config/$config.yml")
             .existing()
