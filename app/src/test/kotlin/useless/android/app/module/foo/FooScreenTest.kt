@@ -24,6 +24,7 @@ import useless.android.app.provider.MockLocalDataProvider
 import useless.android.app.provider.mockContexts
 import useless.android.app.setInjection
 
+@Suppress("NonBooleanPropertyPrefixedWithIs")
 @RunWith(RobolectricTestRunner::class)
 internal class FooScreenTest {
     @get:Rule

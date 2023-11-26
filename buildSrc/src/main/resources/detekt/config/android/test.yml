@@ -1,4 +1,4 @@
-# 2023/11/02
+# 2023/11/26
 
 potential-bugs:
   active: true
@@ -12,5 +12,7 @@ potential-bugs:
       androidx.compose.ui.test.performClick,
       androidx.compose.ui.test.performTouchInput,
       androidx.test.espresso.ViewInteraction.perform,
+      kotlin.checkNotNull,
+      kotlin.error,
       org.junit.Assert.assertThrows
     ]

@@ -43,6 +43,7 @@ potential-bugs:
       java.lang.StringBuilder.append,
       kotlin.TODO,
       kotlin.also,
+      kotlin.checkNotNull,
       kotlin.collections.MutableList.add,
       kotlin.collections.MutableMap.remove,
       kotlin.collections.MutableSet.add,

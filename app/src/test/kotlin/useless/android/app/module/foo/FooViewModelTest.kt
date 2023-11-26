@@ -90,6 +90,7 @@ internal class FooViewModelTest {
         }
     }
 
+    @Suppress("UseIfInsteadOfWhen")
     @Test
     fun requestTextTest() {
         runTest(timeout = 10.seconds) {

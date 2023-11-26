@@ -27,7 +27,7 @@ Useless android app.
  - [x] check${VARIANT^}CodeStyle
  - [x] test${TEST_VARIANT^}UnitTest
  - [x] check${TEST_VARIANT^}Coverage
- - [ ] check${VARIANT^}CodeQuality
- - [ ] check${VARIANT^}CodeQualityUnitTest
+ - [x] check${VARIANT^}CodeQuality
+ - [x] check${VARIANT^}CodeQualityUnitTest
 
 ---
