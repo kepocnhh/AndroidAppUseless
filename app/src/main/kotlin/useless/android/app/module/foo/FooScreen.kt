@@ -27,7 +27,6 @@ import useless.android.app.App
 import useless.android.app.BuildConfig
 import useless.android.app.util.showToast
 
-@Suppress("LongMethod")
 @Composable
 internal fun FooScreen() {
     val context = LocalContext.current
@@ -71,6 +70,7 @@ internal fun FooScreen() {
     )
 }
 
+@Suppress("LongMethod")
 @Composable
 internal fun FooScreen(
     state: FooViewModel.State?,
