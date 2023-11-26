@@ -3,6 +3,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 import sp.gx.core.Badge
 import sp.gx.core.GitHub
 import sp.gx.core.Markdown
+import sp.gx.core.assemble
 import sp.gx.core.camelCase
 import sp.gx.core.check
 import sp.gx.core.existing
@@ -287,6 +288,26 @@ fun getDetektUnitTestConfigs(): Iterable<File> {
     }
 }
 
+fun assembleMetadata(variant: ComponentIdentity) {
+    task(camelCase("assemble", variant.name, "Metadata")) {
+        doLast {
+            val file = layout.buildDirectory.get()
+                .dir("yml")
+                .dir(variant.name)
+                .file("metadata.yml")
+                .assemble(
+                    """
+                        repository:
+                         owner: '${gh.owner}'
+                         name: '${gh.name}'
+                        version: '${variant.getVersion()}'
+                    """.trimIndent(),
+                )
+            println("Metadata: ${file.absolutePath}")
+        }
+    }
+}
+
 androidComponents.onVariants { variant ->
     val output = variant.outputs.single()
     check(output is com.android.build.api.variant.impl.VariantOutputImpl)
@@ -321,6 +342,7 @@ androidComponents.onVariants { variant ->
         }
         checkReadme(variant)
         checkCodeStyle(variant)
+        assembleMetadata(variant)
         val checkManifestTask = task(camelCase("checkManifest", variant.name)) {
             dependsOn(camelCase("compile", variant.name, "Sources"))
             doLast {
