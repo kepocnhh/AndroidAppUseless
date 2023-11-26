@@ -1,3 +1,5 @@
+import com.android.build.api.variant.ApplicationVariant
+import com.android.build.api.variant.Component
 import com.android.build.api.variant.ComponentIdentity
 import sp.gx.core.Badge
 import sp.gx.core.GitHub
@@ -9,6 +11,8 @@ import sp.gx.core.file
 import sp.gx.core.filled
 import sp.gx.core.kebabCase
 import sp.gx.core.resolve
+import io.gitlab.arturbosch.detekt.Detekt
+import sp.gx.core.slashCase
 
 val gh = GitHub.Repository(
     owner = "kepocnhh",
@@ -24,6 +28,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.gradle.jacoco")
+    id("io.gitlab.arturbosch.detekt") version Version.detekt
 }
 
 fun ComponentIdentity.getVersion(): String {
@@ -225,6 +230,66 @@ fun checkCodeStyle(variant: ComponentIdentity) {
     }
 }
 
+fun checkCodeQuality(variant: ComponentIdentity, configs: Iterable<File>, sources: Iterable<File>, postfix: String = "") {
+    task<Detekt>(camelCase("check", variant.name, "CodeQuality", postfix)) {
+        jvmTarget = Version.jvmTarget
+        setSource(sources)
+        config.setFrom(configs)
+        val report = layout.buildDirectory.get()
+            .dir("reports/analysis/code/quality")
+            .dir(slashCase(variant.name, postfix, "html"))
+            .file("index.html")
+            .asFile
+        reports {
+            html {
+                required = true
+                outputLocation = report
+            }
+            md.required = false
+            sarif.required = false
+            txt.required = false
+            xml.required = false
+        }
+        val detektTask = tasks.getByName<Detekt>(camelCase("detekt", variant.name, postfix))
+        classpath.setFrom(detektTask.classpath)
+        doFirst {
+            println("Analysis report: ${report.absolutePath}")
+        }
+    }
+}
+
+fun getDetektConfigs(): Iterable<File> {
+    return setOf(
+        "comments",
+        "common",
+        "complexity",
+        "coroutines",
+        "empty-blocks",
+        "exceptions",
+        "naming",
+        "performance",
+        "potential-bugs",
+        "style",
+    ).map { config ->
+        rootDir.resolve("buildSrc/src/main/resources/detekt/config/$config.yml")
+            .existing()
+            .file()
+            .filled()
+    }
+}
+
+fun getDetektUnitTestConfigs(): Iterable<File> {
+    return setOf(
+        "test",
+        "android/test",
+    ).map { config ->
+        rootDir.resolve("buildSrc/src/main/resources/detekt/config/$config.yml")
+            .existing()
+            .file()
+            .filled()
+    }
+}
+
 androidComponents.onVariants { variant ->
     val output = variant.outputs.single()
     check(output is com.android.build.api.variant.impl.VariantOutputImpl)
@@ -244,6 +309,18 @@ androidComponents.onVariants { variant ->
         }
         if (variant.buildType == android.testBuildType) {
             checkCoverage(variant)
+            checkCodeQuality(
+                variant = variant,
+                configs = getDetektConfigs() + getDetektUnitTestConfigs(),
+                sources = files("src/test/kotlin"),
+                postfix = "UnitTest",
+            )
+        } else {
+            checkCodeQuality(
+                variant = variant,
+                configs = getDetektConfigs(),
+                sources = variant.sources.kotlin!!.all.get().map { it.asFile },
+            )
         }
         checkReadme(variant)
         checkCodeStyle(variant)
