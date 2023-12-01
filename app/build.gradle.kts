@@ -184,9 +184,13 @@ fun checkReadme(variant: ComponentIdentity) {
                     color = "2962ff",
                 ),
             )
+            val fileName = "${gh.name}-${variant.getVersion()}.apk"
+            val releaseLink = Markdown.link("release", gh.url().resolve("releases", "tag", variant.getVersion()))
+            val apkLink = Markdown.link("apk", gh.url().resolve("releases", "download", variant.getVersion(), fileName))
             val expected = setOf(
                 badge,
-                Markdown.link("GitHub", gh.url().resolve("releases", "tag", variant.getVersion())),
+                "GitHub $releaseLink",
+                "Download $apkLink",
             )
             val report = layout.buildDirectory.get()
                 .dir("reports/analysis/readme")
