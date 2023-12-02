@@ -139,7 +139,9 @@ fun checkCoverage(variant: ComponentIdentity) {
             .dir("tmp/kotlin-classes")
             .dir(variant.name)
         val dirs = fileTree(root) {
-            val path = "**/${android.namespace!!.replace('.', '/')}/module/**"
+            val rootPackage = android.namespace!!.replace('.', '/')
+            include("**/$rootPackage/App.class")
+            val path = "**/$rootPackage/module/**"
             setOf("Screen", "ViewModel").forEach { name ->
                 include(
                     "$path/*$name.class",

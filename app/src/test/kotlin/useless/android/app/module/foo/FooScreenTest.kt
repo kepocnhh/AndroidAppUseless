@@ -199,6 +199,7 @@ internal class FooScreenTest {
         val isButton = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button)
         val isRequestText = hasContentDescription("FooScreen:request:text")
         rule.onNode(isButton and isRequestText).performClick()
+//        assertTrue(ShadowToast.showedToast(initialText)) // todo
         assertEquals(ShadowToast.getTextOfLatestToast(), initialText)
     }
 }
