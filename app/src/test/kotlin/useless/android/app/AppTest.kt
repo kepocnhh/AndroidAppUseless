@@ -31,6 +31,7 @@ import org.robolectric.RobolectricTestRunner
 import useless.android.app.module.foo.FooViewModel
 import java.util.concurrent.atomic.AtomicReference
 
+@Suppress("NonBooleanPropertyPrefixedWithIs")
 @RunWith(RobolectricTestRunner::class)
 internal class AppTest {
     @get:Rule
