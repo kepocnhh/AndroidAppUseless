@@ -7,3 +7,10 @@ internal fun App.Companion.setInjection(injection: Injection) {
     field.isAccessible = true
     field.set(this, injection)
 }
+
+internal fun App.Companion.clearStores() {
+    val field = App::class.java.getDeclaredField("vmStores")
+    field.isAccessible = true
+    val stores = field.get(this) as MutableMap<*, *>
+    stores.clear()
+}

@@ -71,7 +71,7 @@ internal class App : Application() {
 
         @Composable
         inline fun <reified T : AbstractViewModel> viewModel(): T {
-            val key = T::class.java.simpleName
+            val key = T::class.java.name
             val (dispose, store) = synchronized(App::class.java) {
                 remember { !vmStores.containsKey(key) } to vmStores.getOrPut(key, ::ViewModelStore)
             }

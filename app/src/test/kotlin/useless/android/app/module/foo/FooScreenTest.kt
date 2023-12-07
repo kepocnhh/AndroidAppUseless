@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performClick
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,6 +20,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowToast
 import useless.android.app.App
 import useless.android.app.TestActivity
+import useless.android.app.clearStores
 import useless.android.app.module.app.mockInjection
 import useless.android.app.provider.MockLocalDataProvider
 import useless.android.app.provider.mockContexts
@@ -29,6 +31,11 @@ import useless.android.app.setInjection
 internal class FooScreenTest {
     @get:Rule
     val rule = createAndroidComposeRule<TestActivity>()
+
+    @Before
+    fun before() {
+        App.clearStores()
+    }
 
     @Test(timeout = 10_000)
     fun initialTextTest() {
