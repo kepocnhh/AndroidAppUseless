@@ -1,4 +1,5 @@
 import com.android.build.api.variant.ComponentIdentity
+import com.android.build.gradle.internal.tasks.R8Task
 import io.gitlab.arturbosch.detekt.Detekt
 import sp.gx.core.Badge
 import sp.gx.core.GitHub
@@ -67,7 +68,7 @@ android {
         applicationId = namespace
         minSdk = Version.Android.minSdk
         targetSdk = Version.Android.targetSdk
-        versionCode = 2
+        versionCode = 3
         versionName = "0.0.$versionCode"
         manifestPlaceholders["appName"] = "@string/app_name"
     }
@@ -84,10 +85,11 @@ android {
         getByName("release") {
             applicationIdSuffix = ""
             versionNameSuffix = ""
-            isMinifyEnabled = true
-            isShrinkResources = true
             manifestPlaceholders["buildType"] = name
             enableUnitTestCoverage = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
             signingConfig = signingConfigs.create(name) {
                 storeFile = properties["STORE_FILE"]?.toString()?.let(::File)
                 storePassword = properties["STORE_PASSWORD"]?.toString()
@@ -102,8 +104,10 @@ android {
                 res.srcDir("src/${parent.name}/res")
                 kotlin.srcDir("src/${parent.name}/kotlin")
             }
+            applicationIdSuffix = ".$name"
             enableUnitTestCoverage = true
             testBuildType = name
+            signingConfig = getByName("debug").signingConfig
         }
     }
 
@@ -139,7 +143,8 @@ fun checkCoverage(variant: ComponentIdentity) {
             .dir("tmp/kotlin-classes")
             .dir(variant.name)
         val dirs = fileTree(root) {
-            val path = "**/${android.namespace!!.replace('.', '/')}/module/**"
+            val rootPackage = android.namespace!!.replace('.', '/')
+            val path = "**/$rootPackage/module/**"
             setOf("Screen", "ViewModel").forEach { name ->
                 include(
                     "$path/*$name.class",
@@ -323,13 +328,13 @@ androidComponents.onVariants { variant ->
         tasks.getByName<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>(camelCase("compile", variant.name, "Kotlin")) {
             kotlinOptions.jvmTarget = Version.jvmTarget
         }
-        tasks.getByName<JavaCompile>(camelCase("compile", variant.name, "UnitTest", "JavaWithJavac")) {
-            targetCompatibility = Version.jvmTarget
-        }
-        tasks.getByName<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>(camelCase("compile", variant.name, "UnitTest", "Kotlin")) {
-            kotlinOptions.jvmTarget = Version.jvmTarget
-        }
         if (variant.buildType == android.testBuildType) {
+            tasks.getByName<JavaCompile>(camelCase("compile", variant.name, "UnitTest", "JavaWithJavac")) {
+                targetCompatibility = Version.jvmTarget
+            }
+            tasks.getByName<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>(camelCase("compile", variant.name, "UnitTest", "Kotlin")) {
+                kotlinOptions.jvmTarget = Version.jvmTarget
+            }
             checkCoverage(variant)
             checkCodeQuality(
                 variant = variant,
@@ -371,19 +376,23 @@ androidComponents.onVariants { variant ->
         tasks.getByName(camelCase("assemble", variant.name)) {
             dependsOn(checkManifestTask)
         }
+        if (variant.isMinifyEnabled) {
+            tasks.getByName<R8Task>(camelCase("minify", variant.name, "WithR8")) {
+                proguardConfigurations.add("-keepclassmembers class ${android.namespace}.module.**ViewModel { <init>(*); }")
+            }
+        }
     }
 }
 
 dependencies {
-    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.activity:activity-compose:1.8.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.compose.foundation:foundation:${Version.Android.compose}")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.5.4")
-    debugImplementation("androidx.compose.ui:ui-tooling-preview:1.5.4")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("org.robolectric:robolectric:4.11")
+    debugImplementation("androidx.compose.ui:ui-tooling:${Version.Android.compose}")
+    debugImplementation("androidx.compose.ui:ui-tooling-preview:${Version.Android.compose}")
     testImplementation("androidx.compose.ui:ui-test-junit4:${Version.Android.compose}")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.robolectric:robolectric:4.11.1")
 
     ktlint("com.pinterest:ktlint:${Version.ktlint}") {
         attributes {
