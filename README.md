@@ -5,10 +5,10 @@ Useless android app.
 
 ## Release
 
-![version](https://img.shields.io/static/v1?label=version&message=0.0.2-2&labelColor=212121&color=2962ff&style=flat)
+![version](https://img.shields.io/static/v1?label=version&message=0.0.3-3&labelColor=212121&color=2962ff&style=flat)
 
-- GitHub [release](https://github.com/kepocnhh/AndroidAppUseless/releases/tag/0.0.2-2)
-- Download [apk](https://github.com/kepocnhh/AndroidAppUseless/releases/download/0.0.2-2/AndroidAppUseless-0.0.2-2.apk)
+- GitHub [release](https://github.com/kepocnhh/AndroidAppUseless/releases/tag/0.0.3-3)
+- Download [apk](https://github.com/kepocnhh/AndroidAppUseless/releases/download/0.0.3-3/AndroidAppUseless-0.0.3-3.apk)
 
 ---
 
